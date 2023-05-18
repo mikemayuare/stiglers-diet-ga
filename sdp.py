@@ -17,8 +17,10 @@ def get_fitness(self):
     nutrient_intake = {nutrient: 0 for nutrient in nutrients}
     for i in range(len(data_per_unit)):
         for nutrient in nutrients:
-            nutrient_intake[nutrient] += self.representation[i] * data_per_unit[i].get(
-                nutrient, 0
+            nutrient_intake[nutrient] += (
+                self.representation[i]
+                / data_per_unit[i]["Unit"]
+                * data_per_unit[i].get(nutrient, 0)
             )
 
     # Calculate a penalty for not meeting the minimum intake requirements
