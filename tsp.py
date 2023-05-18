@@ -1,5 +1,6 @@
 from charles.charles import Population, Individual
-from charles.search import hill_climb, sim_annealing
+
+# from charles.search import hill_climb, sim_annealing
 from data.tsp_data import distance_matrix
 from random import choices
 from copy import deepcopy
@@ -47,12 +48,19 @@ pop = Population(
     sol_size=len(distance_matrix[0]),
     valid_set=[i for i in range(len(distance_matrix[0]))],
     replacement=False,
-    optim="min")
+    optim="min",
+)
 
-pop.evolve(gens=100, select=tournament_sel, mutate=inversion_mutation, crossover=pmx,
-           mut_prob=0.05, xo_prob=0.9, elitism=True)
+pop.evolve(
+    gens=100,
+    select=tournament_sel,
+    mutate=inversion_mutation,
+    crossover=pmx,
+    mut_prob=0.05,
+    xo_prob=0.9,
+    elitism=True,
+)
 
 
-#hill_climb(pop)
-#sim_annealing(pop)
-
+# hill_climb(pop)
+# sim_annealing(pop)
