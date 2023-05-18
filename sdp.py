@@ -1,35 +1,46 @@
 # %%
-from data.sd_data import data, nutrients
+from data.sd_data import data_per_unit, nutrients
 from charles.charles import Population, Individual
 from charles.crossover import uniform_crossover
 from charles.mutation import binary_mutation, swap_mutation
+import random
 
-valid_set = ["0", "1"]  # with replacement
 
+def get_fitness(self):
+    # Calculate the total cost of the diet
+    total_cost = sum(
+        self.representation[i] * data_per_unit[i]["1939 price (cents)"]
+        for i in range(len(data_per_unit))
+    )
 
-def get_fitness(self, constraints=nutrients):
-    total_cost = 0
-    self.constraints = constraints
-    nutrient_values = {nutrient: 0 for nutrient in self.constraints.keys()}
+    # Calculate the total intake of each nutrient
+    nutrient_intake = {nutrient: 0 for nutrient in nutrients}
+    for i in range(len(data_per_unit)):
+        for nutrient in nutrients:
+            nutrient_intake[nutrient] += self.representation[i] * data_per_unit[i].get(
+                nutrient, 0
+            )
 
-    for index, gene in enumerate(self.representation):
-        commodity = self.dataset[index]
-        quantity = int(gene) * commodity["Unit"]
-        total_cost += quantity * commodity["1939 price (cents)"]
+    # Calculate a penalty for not meeting the minimum intake requirements
+    penalty = sum(
+        max(0, nutrients[nutrient] - nutrient_intake[nutrient])
+        for nutrient in nutrients
+    )
 
-        for nutrient in self.constraints:
-            nutrient_values[nutrient] += quantity * commodity[nutrient]
+    # The fitness score is the total cost plus a penalty
+    # for not meeting the nutrient requirements
+    fitness_score = (
+        total_cost + penalty * 5000
+    )  # the factor of 1000 is arbitrary and can be adjusted
 
-    # Check if individual meets the minimum requirements for each nutrient
-    for nutrient in self.constraints:
-        if nutrient_values[nutrient] < self.constraints[nutrient]:
-            return 0
-
-    return 1 / total_cost  # Invert the cost to maximize the fitness
+    return fitness_score
 
 
 # monkey patching the fitness
 Individual.get_fitness = get_fitness
-Individual.dataset = data
 
+ind = Individual(
+    representation=[random.randint(0, item["Unit"]) for item in data_per_unit]
+)
+print(ind)
 # %%
