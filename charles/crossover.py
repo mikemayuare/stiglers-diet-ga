@@ -1,4 +1,4 @@
-from random import randint, sample, uniform
+from random import randint, sample, uniform, random
 
 
 def single_point_co(p1, p2):
@@ -112,6 +112,33 @@ def arithmetic_xo(p1, p2):
         o1[i] = p1[i] * alpha + (1 - alpha) * p2[i]
         o2[i] = p2[i] * alpha + (1 - alpha) * p1[i]
     return o1, o2
+
+
+def blx_alpha_crossover(parent1, parent2, alpha=0.1):
+    size = len(parent1)
+    chromosome1 = parent1
+    chromosome2 = parent2
+
+    offspring1 = [None] * size
+    offspring2 = [None] * size
+
+    for i in range(size):
+        # Determine the lower and upper bounds for the blending range
+        min_val = min(chromosome1[i], chromosome2[i])
+        max_val = max(chromosome1[i], chromosome2[i])
+
+        # Calculate the range of the blending region
+        range_val = max_val - min_val
+
+        # Calculate the lower and upper bounds of the offspring
+        low = min_val - alpha * range_val
+        high = max_val + alpha * range_val
+
+        # Generate a random value within the blending range
+        offspring1[i] = uniform(low, high)
+        offspring2[i] = uniform(low, high)
+
+    return offspring1, offspring2
 
 
 if __name__ == "__main__":
