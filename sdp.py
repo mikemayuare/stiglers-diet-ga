@@ -1,9 +1,15 @@
 # %%
 from data.sd_data import data, data_per_unit, nutrients
 from charles.charles import Population, Individual
-from charles.crossover import uniform_crossover, arithmetic_xo, blx_alpha_crossover
+from charles.crossover import (
+    uniform_crossover,
+    arithmetic_xo,
+    blx_alpha_xo,
+    simplex_xo,
+    sbx_xo,
+)
 from charles.mutation import inversion_mutation
-from charles.selection import tournament_sel
+from charles.selection import tournament_sel, rank_sel, fps
 from operator import attrgetter
 import random
 
@@ -73,10 +79,10 @@ size = len(data)
 # the way this is initialized can impact how long this can take
 
 pop = Population(
-    size=200,
+    size=100,
     sol_size=size,
     valid_set=[
-        0 if random.random() < 0.85 else random.uniform(0, 0.3) for _ in range(1000)
+        0 if random.random() < 0.85 else random.uniform(0, 0.35) for _ in range(10000)
     ],
     replacement=True,
     optim="min",
@@ -84,10 +90,13 @@ pop = Population(
 
 pop.evolve(
     gens=100,
-    select=tournament_sel,
+    # select=tournament_sel,
+    select=rank_sel,
     mutate=inversion_mutation,
-    crossover=blx_alpha_crossover,
-    mut_prob=0.05,
+    # crossover=blx_alpha_xo,
+    # crossover=simplex_xo,
+    crossover=sbx_xo,
+    mut_prob=0.1,
     xo_prob=0.9,
     elitism=True,
 )
@@ -95,6 +104,7 @@ pop.evolve(
 best_individual = min(pop.individuals, key=attrgetter("fitness"))
 # print(best_individual.representation)
 print(best_individual.total_nutrients)
+print(f"Yearly budget {best_individual.fitness * 365}")
 # representation=[0 if random.random() < 0.85 else random.uniform(0, 0.3) for _ in range(size)]
 # individual = Individual(representation=representation)
 # print(individual)

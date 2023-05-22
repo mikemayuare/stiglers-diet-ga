@@ -114,18 +114,16 @@ def arithmetic_xo(p1, p2):
     return o1, o2
 
 
-def blx_alpha_crossover(parent1, parent2, alpha=0.1):
-    size = len(parent1)
-    chromosome1 = parent1
-    chromosome2 = parent2
+def blx_alpha_xo(p1, p2, alpha=0.1):
+    size = len(p1)
 
-    offspring1 = [None] * size
-    offspring2 = [None] * size
+    o1 = [None] * size
+    o2 = [None] * size
 
     for i in range(size):
         # Determine the lower and upper bounds for the blending range
-        min_val = min(chromosome1[i], chromosome2[i])
-        max_val = max(chromosome1[i], chromosome2[i])
+        min_val = min(p1[i], p2[i])
+        max_val = max(p1[i], p2[i])
 
         # Calculate the range of the blending region
         range_val = max_val - min_val
@@ -135,10 +133,82 @@ def blx_alpha_crossover(parent1, parent2, alpha=0.1):
         high = max_val + alpha * range_val
 
         # Generate a random value within the blending range
-        offspring1[i] = uniform(low, high)
-        offspring2[i] = uniform(low, high)
+        o1[i] = uniform(low, high)
+        o2[i] = uniform(low, high)
 
-    return offspring1, offspring2
+    return o1, o2
+
+
+def simplex_xo(p1, p2):
+    # Construct the simplex
+    simplex = [p1, p2]
+    size = len(p1)
+
+    # Add a random point within the line segment connecting p1 and p2
+    random_point = []
+    for i in range(size):
+        alpha = uniform(0, 1)
+        random_coordinate = p1[i] + alpha * (p2[i] - p1[i])
+        random_point.append(random_coordinate)
+    simplex.append(random_point)
+
+    # Generate offspring
+    o1 = []
+    o2 = []
+    for i in range(size):
+        coordinates = [
+            vertex[i] for vertex in simplex
+        ]  # Get the coordinates of the vertices along the i-th dimension
+        min_coordinate = min(coordinates)
+        max_coordinate = max(coordinates)
+
+        # Randomly select a point within the range defined by the min and max coordinates
+        offspring_coordinate = uniform(min_coordinate, max_coordinate)
+        o1.append(offspring_coordinate)
+
+        # Generate a second offspring by taking the average of the parent genes
+        avg_coordinate = sum(coordinates) / len(coordinates)
+        o2.append(avg_coordinate)
+
+    return o1, o2
+
+
+def sbx_xo(p1, p2, eta=20):
+    # Assuming p1 and p2 are lists of non-negative real numbers representing genes
+    # eta is the distribution index parameter
+
+    size = len(p1)
+    o1 = []
+    o2 = []
+
+    for i in range(size):
+        # Perform SBX crossover for each gene
+
+        u = random()  # Random value between 0 and 1
+        if u <= 0.5:
+            beta = (2 * u) ** (1 / (eta + 1))
+        else:
+            beta = (1 / (2 * (1 - u))) ** (1 / (eta + 1))
+
+        # Calculate the minimum value for the offspring gene
+        min_value = min(p1[i], p2[i])
+
+        # Calculate the maximum value for the offspring gene
+        max_value = max(p1[i], p2[i])
+
+        # Generate the offspring gene within the range [min_value, max_value]
+        child = 0.5 * ((1 - beta) * min_value + (1 + beta) * max_value)
+
+        # Ensure the offspring gene is non-negative
+        child = max(0, child)
+
+        o1.append(child)
+
+        # Generate a second offspring by taking the average of the parent genes
+        avg_coordinate = sum([p1[i], p2[i]]) / 2
+        o2.append(avg_coordinate)
+
+    return o1, o2
 
 
 if __name__ == "__main__":
@@ -160,8 +230,8 @@ def uniform_crossover(p1, p2):
         The two children created by modified uniform crossover.
     """
 
-    crossover_point1 = random.randint(0, len(p1) - 1)
-    crossover_point2 = random.randint(crossover_point1 + 1, len(p1))
+    crossover_point1 = randint(0, len(p1) - 1)
+    crossover_point2 = randint(crossover_point1 + 1, len(p1))
 
     o1 = (
         p1[:crossover_point1]
