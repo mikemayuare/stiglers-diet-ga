@@ -85,6 +85,14 @@ def sine_mutation(individual):
     return mutant
 
 
+def power_law_mutation(individual, power=2):
+    mutant = []
+    for gene in individual:
+        new_gene = gene * uniform(0, 1) ** power
+        mutant.append(new_gene)
+    return mutant
+
+
 if __name__ == '__main__':
     test = [1, 2, 3, 4, 5, 6]
     test = inversion_mutation(test)
