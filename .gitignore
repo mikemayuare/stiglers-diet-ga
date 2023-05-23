@@ -32,6 +32,8 @@ obj/**
 tmp/**
 .python-version
 .vs/
+.vscode/
+.idea
 test-results*.xml
 xunit-test-results.xml
 build/ci/performance/performance-results.json
@@ -42,6 +44,7 @@ pydevd*.log
 nodeLanguageServer/**
 nodeLanguageServer.*/**
 dist/**
+**__pycache__**
 # translation files
 *.xlf
 package.nls.*.json
