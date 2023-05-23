@@ -55,6 +55,21 @@ def inversion_mutation(individual):
     return individual
 
 
+def gaussian_mutation(individual):
+    mutant = deepcopy(individual)
+    size = len(individual)
+
+    for i in range(size):
+        # mean and std are randonmly chosen
+        mut_value = gauss(uniform(0, 0.35), uniform(0, 0.35))
+
+        if random < 0.5:
+            mutant[i] = max(0, mutant[i] + mut_value)
+        else:
+            mutant[i] = max(0, mutant[i] - mut_value)
+    return mutant
+
+
 if __name__ == '__main__':
     test = [1, 2, 3, 4, 5, 6]
     test = inversion_mutation(test)
