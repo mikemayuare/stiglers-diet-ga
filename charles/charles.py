@@ -41,6 +41,9 @@ class Individual:
     def __repr__(self):
         return f"Individual(size={len(self.representation)}); Fitness: {self.fitness}"
 
+    def __lt__(self, other):
+        return self.fitness < other.fitness
+
 
 class Population:
     def __init__(self, size, optim, **kwargs):
@@ -56,7 +59,17 @@ class Population:
                 )
             )
 
-    def evolve(self, gens, xo_prob, mut_prob, select, mutate, crossover, elitism):
+    def evolve(
+        self,
+        gens,
+        xo_prob,
+        mut_prob,
+        select,
+        mutate,
+        crossover,
+        elitism,
+        xo_param=None,
+    ):
         for i in range(gens):
             new_pop = []
 
@@ -70,7 +83,14 @@ class Population:
                 parent1, parent2 = select(self), select(self)
 
                 if random() < xo_prob:
-                    offspring1, offspring2 = crossover(parent1, parent2)
+                    if xo_param == None:
+                        offspring1, offspring2 = crossover(parent1, parent2)
+                    else:
+                        offspring1, offspring2 = crossover(
+                            parent1,
+                            parent2,
+                            xo_param,
+                        )
                 else:
                     offspring1, offspring2 = parent1, parent2
 
@@ -108,3 +128,6 @@ class Population:
 
     def __getitem__(self, position):
         return self.individuals[position]
+
+    def __lt__(self, other):
+        return self.individuals < other.individuals

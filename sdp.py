@@ -7,6 +7,8 @@ from charles.crossover import (
     blx_alpha_xo,
     simplex_xo,
     sbx_xo,
+    single_point_co,
+    nux_xo,
 )
 from charles.mutation import inversion_mutation
 from charles.selection import tournament_sel, rank_sel, fps
@@ -67,7 +69,7 @@ def get_fitness(self):
                 nutrients[nutrient] - self.total_nutrients[nutrient]
             )
     # print(self.total_nutrients)
-    print(fitness_value)
+    # print(fitness_value)
     return fitness_value
 
 
@@ -90,12 +92,18 @@ pop = Population(
 
 pop.evolve(
     gens=100,
-    # select=tournament_sel,
-    select=rank_sel,
+    select=tournament_sel,
+    # select=rank_sel,
     mutate=inversion_mutation,
-    # crossover=blx_alpha_xo,
+    # crossover=blx_alpha_xo, # (alpha ~ 0.8)
     # crossover=simplex_xo,
-    crossover=sbx_xo,
+    # crossover=uniform_crossover,
+    # crossover=single_point_co,
+    # crossover=sbx_xo,
+    crossover=nux_xo,  # eta ~ 1 - 3
+    # in case the crossover has a third parameter use this
+    # if not, comment or delete
+    xo_param=2,
     mut_prob=0.1,
     xo_prob=0.9,
     elitism=True,
