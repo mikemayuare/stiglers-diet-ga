@@ -1,4 +1,5 @@
-from random import randint, sample
+from random import randint, sample, random, uniform, gauss
+from copy import deepcopy
 
 
 def binary_mutation(individual):
@@ -67,6 +68,20 @@ def gaussian_mutation(individual):
             mutant[i] = max(0, mutant[i] + mut_value)
         else:
             mutant[i] = max(0, mutant[i] - mut_value)
+    return mutant
+
+
+def sine_mutation(individual):
+    mutant = deepcopy(individual)
+    size = len(individual)
+    scaling_factor = uniform(0.1-0.5)
+    for i in range(size):
+        mutation_value = scaling_factor * sin(2 * pi * random())
+        mutant[i] += mutation_value
+        if mutant[i] < 0:
+            mutant[i] = 0
+        elif mutant[i] > 0.35:
+            mutant[i] = 0.35
     return mutant
 
 
