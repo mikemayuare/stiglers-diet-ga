@@ -285,7 +285,7 @@ def nux_xo(p1, p2, eta=5):
 
             if random() < 0.5:
                 delta = (1 - beta) * (o1[i] - o2[i])
-                o1[i] = max(0, o1[1] - delta)
+                o1[i] = max(0, o1[i] - delta)
                 o2[i] = max(0, o2[i] + delta)
             else:
                 delta = (1 - beta) * (o1[i] - o2[i])
