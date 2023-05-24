@@ -1,4 +1,5 @@
-from random import randint, sample
+from random import randint, sample, random, uniform, gauss
+from copy import deepcopy
 
 
 def binary_mutation(individual):
@@ -53,6 +54,43 @@ def inversion_mutation(individual):
     mut_indexes.sort()
     individual[mut_indexes[0]:mut_indexes[1]] = individual[mut_indexes[0]:mut_indexes[1]][::-1]
     return individual
+
+
+def gaussian_mutation(individual):
+    mutant = deepcopy(individual)
+    size = len(individual)
+
+    for i in range(size):
+        # mean and std are randonmly chosen
+        mut_value = gauss(uniform(0, 0.35), uniform(0, 0.35))
+
+        if random < 0.5:
+            mutant[i] = max(0, mutant[i] + mut_value)
+        else:
+            mutant[i] = max(0, mutant[i] - mut_value)
+    return mutant
+
+
+def sine_mutation(individual):
+    mutant = deepcopy(individual)
+    size = len(individual)
+    scaling_factor = uniform(0.1-0.5)
+    for i in range(size):
+        mutation_value = scaling_factor * sin(2 * pi * random())
+        mutant[i] += mutation_value
+        if mutant[i] < 0:
+            mutant[i] = 0
+        elif mutant[i] > 0.35:
+            mutant[i] = 0.35
+    return mutant
+
+
+def power_law_mutation(individual, power=2):
+    mutant = []
+    for gene in individual:
+        new_gene = gene * uniform(0, 1) ** power
+        mutant.append(new_gene)
+    return mutant
 
 
 if __name__ == '__main__':
