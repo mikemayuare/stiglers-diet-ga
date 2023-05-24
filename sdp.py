@@ -1,5 +1,5 @@
 # %%
-from data.sd_data import data, data_per_unit, nutrients
+from data.sd_data import data, nutrients
 from charles.charles import Population, Individual
 from charles.crossover import (
     uniform_crossover,
@@ -10,40 +10,15 @@ from charles.crossover import (
     single_point_co,
     nux_xo,
 )
-from charles.mutation import inversion_mutation
+from charles.mutation import (
+    inversion_mutation,
+    gaussian_mutation,
+    sine_mutation,
+    power_law_mutation,
+)
 from charles.selection import tournament_sel, rank_sel, fps
 from operator import attrgetter
 import random
-
-
-# def get_fitness(self):
-#     # Calculate the total cost of the diet
-#     total_cost = sum(
-#         self.representation[i] * data_per_unit[i]["1939 price (cents)"]
-#         for i in range(len(data_per_unit))
-#     )
-
-#     # Calculate the total intake of each nutrient
-#     nutrient_intake = {nutrient: 0 for nutrient in nutrients}
-#     for i in range(len(data_per_unit)):
-#         for nutrient in nutrients:
-#             nutrient_intake[nutrient] += self.representation[i] / data_per_unit[i]["Unit"] * data_per_unit[i].get(
-#                 nutrient, 0
-#             )
-
-#     # Calculate a penalty for not meeting the minimum intake requirements
-#     penalty = sum(
-#         max(0, nutrients[nutrient] - nutrient_intake[nutrient])
-#         for nutrient in nutrients
-#     )
-
-#     # The fitness score is the total cost plus a penalty
-#     # for not meeting the nutrient requirements
-#     fitness_score = (
-#         total_cost + penalty * 5000
-#     )  # the factor of 1000 is arbitrary and can be adjusted
-
-#     return fitness_score
 
 
 def get_fitness(self):
@@ -91,19 +66,20 @@ pop = Population(
 )
 
 pop.evolve(
-    gens=100,
-    select=tournament_sel,
-    # select=rank_sel,
-    mutate=inversion_mutation,
-    # crossover=blx_alpha_xo, # (alpha ~ 0.8)
+    gens=500,
+    # select=tournament_sel,
+    select=rank_sel,
+    # mutate=inversion_mutation,
+    mutate=power_law_mutation,
+    crossover=blx_alpha_xo,  # (alpha ~ 0.8)
     # crossover=simplex_xo,
     # crossover=uniform_crossover,
     # crossover=single_point_co,
     # crossover=sbx_xo,
-    crossover=nux_xo,  # eta ~ 1 - 3
+    # crossover=nux_xo,  # eta ~ 1 - 3
     # in case the crossover has a third parameter use this
     # if not, comment or delete
-    xo_param=2,
+    xo_param=0.8,
     mut_prob=0.1,
     xo_prob=0.9,
     elitism=True,

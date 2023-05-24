@@ -1,5 +1,6 @@
 from random import randint, sample, random, uniform, gauss
 from copy import deepcopy
+from math import sin, pi
 
 
 def binary_mutation(individual):
@@ -22,7 +23,8 @@ def binary_mutation(individual):
         individual[mut_index] = 0
     else:
         raise Exception(
-            f"Trying to do binary mutation on {individual}. But it's not binary.")
+            f"Trying to do binary mutation on {individual}. But it's not binary."
+        )
     return individual
 
 
@@ -36,7 +38,10 @@ def swap_mutation(individual):
         Individual: Mutated Individual
     """
     mut_indexes = sample(range(0, len(individual)), 2)
-    individual[mut_indexes[0]], individual[mut_indexes[1]] = individual[mut_indexes[1]], individual[mut_indexes[0]]
+    individual[mut_indexes[0]], individual[mut_indexes[1]] = (
+        individual[mut_indexes[1]],
+        individual[mut_indexes[0]],
+    )
     return individual
 
 
@@ -50,9 +55,11 @@ def inversion_mutation(individual):
         Individual: Mutated Individual
     """
     mut_indexes = sample(range(0, len(individual)), 2)
-    #mut_indexes = [0,3]
+    # mut_indexes = [0,3]
     mut_indexes.sort()
-    individual[mut_indexes[0]:mut_indexes[1]] = individual[mut_indexes[0]:mut_indexes[1]][::-1]
+    individual[mut_indexes[0] : mut_indexes[1]] = individual[
+        mut_indexes[0] : mut_indexes[1]
+    ][::-1]
     return individual
 
 
@@ -64,7 +71,7 @@ def gaussian_mutation(individual):
         # mean and std are randonmly chosen
         mut_value = gauss(uniform(0, 0.35), uniform(0, 0.35))
 
-        if random < 0.5:
+        if random() < 0.5:
             mutant[i] = max(0, mutant[i] + mut_value)
         else:
             mutant[i] = max(0, mutant[i] - mut_value)
@@ -74,7 +81,7 @@ def gaussian_mutation(individual):
 def sine_mutation(individual):
     mutant = deepcopy(individual)
     size = len(individual)
-    scaling_factor = uniform(0.1-0.5)
+    scaling_factor = uniform(0.1, 0.5)
     for i in range(size):
         mutation_value = scaling_factor * sin(2 * pi * random())
         mutant[i] += mutation_value
@@ -93,23 +100,7 @@ def power_law_mutation(individual, power=2):
     return mutant
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     test = [1, 2, 3, 4, 5, 6]
     test = inversion_mutation(test)
     print(test)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
