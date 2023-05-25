@@ -16,7 +16,12 @@ from charles.mutation import (
     sine_mutation,
     power_law_mutation,
 )
-from charles.selection import tournament_sel, rank_sel, fps
+from charles.selection import (
+    tournament_sel,
+    rank_sel,
+    fps,
+    fss,
+)
 from operator import attrgetter
 import random
 
@@ -59,7 +64,7 @@ pop = Population(
     size=100,
     sol_size=size,
     valid_set=[
-        0 if random.random() < 0.85 else random.uniform(0, 0.35) for _ in range(10000)
+        0 if random.random() < 0.85 else random.uniform(0, 0.35) for _ in range(50000)
     ],
     replacement=True,
     optim="min",
@@ -68,9 +73,10 @@ pop = Population(
 pop.evolve(
     gens=500,
     # select=tournament_sel,
-    select=rank_sel,
-    # mutate=inversion_mutation,
-    mutate=power_law_mutation,
+    select=fss,
+    # select=rank_sel,
+    mutate=inversion_mutation,
+    # mutate=power_law_mutation,
     crossover=blx_alpha_xo,  # (alpha ~ 0.8)
     # crossover=simplex_xo,
     # crossover=uniform_crossover,
@@ -78,10 +84,11 @@ pop.evolve(
     # crossover=sbx_xo,
     # crossover=nux_xo,  # eta ~ 1 - 3
     # in case the crossover has a third parameter use this
-    # if not, comment or delete
     xo_param=0.8,
-    mut_prob=0.1,
-    xo_prob=0.9,
+    # second parameter in selections
+    sel_param=6,
+    mut_prob=0.05,
+    xo_prob=1,
     elitism=True,
 )
 
