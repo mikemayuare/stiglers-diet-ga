@@ -20,7 +20,6 @@ from charles.selection import (
     tournament_sel,
     rank_sel,
     fps,
-    fss,
 )
 from operator import attrgetter
 import random
@@ -56,48 +55,110 @@ def get_fitness(self):
 # monkey patching the fitness
 Individual.get_fitness = get_fitness
 
-# initialize a single individual
-size = len(data)
-# the way this is initialized can impact how long this can take
 
-pop = Population(
-    size=100,
-    sol_size=size,
-    valid_set=[
-        0 if random.random() < 0.85 else random.uniform(0, 0.35) for _ in range(50000)
-    ],
-    replacement=True,
-    optim="min",
-)
+# %%
+def test_ga(
+    crossover,
+    mutation,
+    selection,
+    # xo_param,
+    # sel_param,
+    mut_prob,
+    xo_prob,
+):
+    pop = Population(
+        size=100,
+        sol_size=len(data),
+        valid_set=[
+            0 if random.random() < 0.85 else random.uniform(0, 0.35)
+            for _ in range(50000)
+        ],
+        replacement=True,
+        optim="min",
+    )
 
-pop.evolve(
-    gens=500,
-    # select=tournament_sel,
-    select=fss,
-    # select=rank_sel,
-    mutate=inversion_mutation,
-    # mutate=power_law_mutation,
-    crossover=blx_alpha_xo,  # (alpha ~ 0.8)
-    # crossover=simplex_xo,
-    # crossover=uniform_crossover,
-    # crossover=single_point_co,
-    # crossover=sbx_xo,
-    # crossover=nux_xo,  # eta ~ 1 - 3
-    # in case the crossover has a third parameter use this
+    pop.evolve(
+        gens=100,
+        select=selection,
+        mutate=mutation,
+        crossover=crossover,
+        # xo_param=xo_param,
+        # sel_param=sel_param,
+        mut_prob=mut_prob,
+        xo_prob=xo_prob,
+        elitism=True,
+    )
+
+    return pop
+
+
+# %%
+pop = test_ga(
+    crossover=blx_alpha_xo,
+    selection=tournament_sel,
+    mutation=power_law_mutation,
     xo_param=0.8,
-    # second parameter in selections
     sel_param=6,
-    mut_prob=0.05,
+    mut_prob=0.1,
     xo_prob=1,
-    elitism=True,
 )
 
+# %%
 best_individual = min(pop.individuals, key=attrgetter("fitness"))
 # print(best_individual.representation)
 print(best_individual.total_nutrients)
 print(f"Yearly budget {best_individual.fitness * 365}")
-# representation=[0 if random.random() < 0.85 else random.uniform(0, 0.3) for _ in range(size)]
-# individual = Individual(representation=representation)
-# print(individual)
-# print(individual.representation)
+# %%
+crossovers = {
+    "uniform_crossover": uniform_crossover,
+    "arithmetic_xo": arithmetic_xo,
+    "blx_alpha_xo": blx_alpha_xo,
+    "simplex_xo": simplex_xo,
+    "sbx_xo": sbx_xo,
+    "single_point_co": single_point_co,
+    "nux_xo": nux_xo,
+}
+
+mutations = {
+    "inversion_mutation": inversion_mutation,
+    "gaussian_mutation": gaussian_mutation,
+    "sine_mutation": sine_mutation,
+    "power_law_mutation": power_law_mutation,
+}
+
+passes = 5
+results = {}
+for xo_name, xo in crossovers.items():
+    results[xo_name] = {}
+    for mut_name, mut in mutations.items():
+        ga_results = []
+        for _ in range(passes):
+            model = test_ga(
+                crossover=xo,
+                selection=tournament_sel,
+                mutation=mut,
+                # xo_param=0.8,
+                # sel_param=6,
+                mut_prob=0.1,
+                xo_prob=0.9,
+            )
+            best_individual = min(model.individuals, key=attrgetter("fitness"))
+            ga_results.append(best_individual.fitness)
+        results[xo_name][mut_name] = sum(ga_results) / passes
+
+print(results)
+
+
+# %%
+import pandas as pd
+
+df = pd.DataFrame(results)
+df.to_csv("heatmap.csv")
+
+print(df)
+# %%
+import plotly.express as px
+
+fig = px.imshow(df)
+fig.write_image("images/heatmap.svg")
 # %%

@@ -115,7 +115,7 @@ def arithmetic_xo(p1, p2):
     return o1, o2
 
 
-def blx_alpha_xo(p1, p2, alpha=0.1):
+def blx_alpha_xo(p1, p2, alpha=0.8):
     """
     Performs Blend Alpha Crossover (BLX-α) between two parent solutions.
 
