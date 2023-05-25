@@ -69,6 +69,7 @@ class Population:
         crossover,
         elitism,
         xo_param=None,
+        sel_param=None,
     ):
         for i in range(gens):
             new_pop = []
@@ -80,7 +81,10 @@ class Population:
                     elite = deepcopy(min(self.individuals, key=attrgetter("fitness")))
 
             while len(new_pop) < self.size:
-                parent1, parent2 = select(self), select(self)
+                if sel_param == None:
+                    parent1, parent2 = select(self), select(self)
+                else:
+                    parent1, parent2 = select(self, sel_param), select(self, sel_param)
 
                 if random() < xo_prob:
                     if xo_param == None:
