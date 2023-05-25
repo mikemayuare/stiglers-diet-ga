@@ -71,6 +71,7 @@ class Population:
         xo_param=None,
         sel_param=None,
     ):
+        self.fitness_per_gen = []
         for i in range(gens):
             new_pop = []
 
@@ -125,7 +126,9 @@ class Population:
             if self.optim == "max":
                 print(f'Best Individual: {max(self, key=attrgetter("fitness"))}')
             elif self.optim == "min":
-                print(f'Best Individual: {min(self, key=attrgetter("fitness"))}')
+                best_individual = min(self, key=attrgetter("fitness"))
+                print(f"Best Individual: {best_individual}")
+                self.fitness_per_gen.append(best_individual.fitness)
 
     def __len__(self):
         return len(self.individuals)
