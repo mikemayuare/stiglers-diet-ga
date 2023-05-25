@@ -294,6 +294,19 @@ def nux_xo(p1, p2, eta=5):
     return o1, o2
 
 
+def entry_5050ChangeChance(p1, p2):
+    o1 = deepcopy(p1)
+    o2 = deepcopy(p2)
+    size = len(p1)
+    
+    for i in range(size):
+        if random() < 0.5:
+            o1[i] = p2[i]
+        if random() < 0.5:
+            o2[i] = p1[i]
+    return o1, o2
+
+
 if __name__ == "__main__":
     # p1, p2 = [9, 8, 4, 5, 6, 7, 1, 3, 2, 10], [8, 7, 1, 2, 3, 10, 9, 5, 4, 6]
     p1, p2 = [0.1, 0.15, 0.3], [0.3, 0.1, 0.2]
