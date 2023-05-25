@@ -227,6 +227,20 @@ def uniform_crossover(p1, p2):
 
 
 def nux_xo(p1, p2, eta=5):
+    """
+    Perform the Non-Uniform crossover between two parents.
+
+    This function applies the NUX crossover operator to two parent chromosomes.
+    Each gene in the offspring is modified based on a random value and the eta parameter.
+
+    Args:
+        p1 (list): The first parent chromosome.
+        p2 (list): The second parent chromosome.
+        eta (int, optional): The eta parameter for controlling the crossover behavior. Defaults to 5.
+
+    Returns:
+        tuple of lists: A tuple containing the two offspring chromosomes.
+    """
     o1 = deepcopy(p1)
     o2 = deepcopy(p2)
     size = len(p1)
