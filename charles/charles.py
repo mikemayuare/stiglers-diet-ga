@@ -69,8 +69,10 @@ class Population:
         crossover,
         elitism,
         xo_param=None,
+        mut_param=None,
         sel_param=None,
     ):
+        self.fitness_per_gen = []
         for i in range(gens):
             new_pop = []
 
@@ -98,10 +100,16 @@ class Population:
                 else:
                     offspring1, offspring2 = parent1, parent2
 
-                if random() < mut_prob:
-                    offspring1 = mutate(offspring1)
-                if random() < mut_prob:
-                    offspring2 = mutate(offspring2)
+                if mut_param == None:
+                    if random() < mut_prob:
+                        offspring1 = mutate(offspring1)
+                    if random() < mut_prob:
+                        offspring2 = mutate(offspring2)
+                else:
+                    if random() < mut_prob:
+                        offspring1 = mutate(offspring1, sel_param)
+                    if random() < mut_prob:
+                        offspring2 = mutate(offspring2, sel_param)
 
                 new_pop.append(Individual(representation=offspring1))
                 if len(new_pop) < self.size:
@@ -125,7 +133,9 @@ class Population:
             if self.optim == "max":
                 print(f'Best Individual: {max(self, key=attrgetter("fitness"))}')
             elif self.optim == "min":
-                print(f'Best Individual: {min(self, key=attrgetter("fitness"))}')
+                best_individual = min(self, key=attrgetter("fitness"))
+                # print(f"Best Individual: {best_individual}")
+                self.fitness_per_gen.append(best_individual.fitness)
 
     def __len__(self):
         return len(self.individuals)
