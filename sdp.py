@@ -302,7 +302,7 @@ print(
 for key, value in best_individual.total_nutrients.items():
     print(f"{key}:__{round(value, 2)}__")
 
-print("/n/n")
+print("\n")
 
 commodities = []
 for food in data:
