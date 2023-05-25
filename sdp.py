@@ -178,8 +178,6 @@ for alpha in np.arange(0.1, 2.1, 0.1):
 
     mean_scores[round(alpha, 1)] = sum(scores) / passes
 
-print(mean_scores)
-
 fig = px.line(
     x=[key for key in mean_scores.keys()], y=[value for value in mean_scores.values()]
 )
@@ -303,6 +301,8 @@ print(
 
 for key, value in best_individual.total_nutrients.items():
     print(f"{key}:__{round(value, 2)}__")
+
+print("/n/n")
 
 commodities = []
 for food in data:
