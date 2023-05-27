@@ -1,3 +1,4 @@
+# %%
 from data.sd_data import data, nutrients
 from charles.charles import Population, Individual
 from charles.crossover import (
@@ -58,6 +59,7 @@ def get_fitness(self):
 Individual.get_fitness = get_fitness
 
 
+# %%
 def test_ga(
     crossover,
     mutation,
@@ -260,6 +262,7 @@ fig = px.line(
 fig.update_layout(xaxis_title="Exponent", yaxis_title="Fitness score")
 fig.write_image("images/power-tuning.svg")
 
+# %%
 # testing a single run and plotting the best fitness score
 # of each generation
 pop = Population(
@@ -274,12 +277,12 @@ pop = Population(
 
 pop.evolve(
     gens=200,
-    select=tournament_sel,
+    select=rank_sel,
     mutate=power_law_mutation,
     crossover=blx_alpha_xo,
     xo_param=1,
-    sel_param=4,
-    mut_param=4,
+    # sel_param=4,
+    mut_param=5,
     mut_prob=0.1,
     xo_prob=0.9,
     elitism=True,
@@ -287,7 +290,7 @@ pop.evolve(
 
 fig = px.line(x=range(1, 201), y=pop.fitness_per_gen)
 fig.update_layout(xaxis_title="Generation", yaxis_title="Best fitness")
-fig.write_image("images/evolution.svg")
+fig.write_image("images/evolution2.svg")
 
 best_individual = min(pop.individuals, key=attrgetter("fitness"))
 best_fitness = best_individual.fitness
@@ -316,3 +319,5 @@ for commodity, value in commodities:
 
 for commodity, value in best_foods:
     print(f"{commodity}:__{value}$__")
+
+# %%
