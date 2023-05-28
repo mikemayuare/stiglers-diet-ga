@@ -158,23 +158,27 @@ for crosso1 in list_crossovers:
     for mutati1 in list_mutations:
         for crosso2 in list_crossovers:
             for mutati2 in list_mutations:
-                if (mutati1==mutati2 and crosso1==crosso2):
+                if mutati1 == mutati2 and crosso1 == crosso2:
                     pass
                 else:
-                    U_statistic, p_value = mannwhitneyu(results_all[crosso1][mutati1],results_all[crosso2][mutati2])
-                    print("\nCrossover:",crosso1,"| Mutation:",mutati1)
+                    U_statistic, p_value = mannwhitneyu(
+                        results_all[crosso1][mutati1], results_all[crosso2][mutati2]
+                    )
+                    print("\nCrossover:", crosso1, "| Mutation:", mutati1)
                     print("                    vs")
-                    print("Crossover:",crosso2,"| Mutation:",mutati2)
+                    print("Crossover:", crosso2, "| Mutation:", mutati2)
                     print("Value of the statistic (U):", U_statistic)
                     print("p-value:", p_value)
                     print("\n==========================================")
-                    aa = [results_all[crosso1][mutati1],results_all[crosso2][mutati2]]
+                    aa = [results_all[crosso1][mutati1], results_all[crosso2][mutati2]]
                     plt.figure()
-                    plt.boxplot(aa, labels = [crosso1+"\n"+mutati1,crosso2+"\n"+mutati2])
+                    plt.boxplot(
+                        aa, labels=[crosso1 + "\n" + mutati1, crosso2 + "\n" + mutati2]
+                    )
                     if p_value < 0.1:
-                        titulo= "Reject H0"
+                        titulo = "Reject H0"
                     else:
-                        titulo= "No statistical evidence \n to reject H0"
+                        titulo = "No statistical evidence \n to reject H0"
                     plt.title(titulo)
                     plt.show
 # # # END STATISTICS TESTS TO COMPARE MODELS # # #
@@ -315,11 +319,11 @@ pop = Population(
 
 pop.evolve(
     gens=200,
-    select=rank_sel,
+    select=tournament_sel,
     mutate=power_law_mutation,
     crossover=blx_alpha_xo,
     xo_param=1,
-    # sel_param=4,
+    sel_param=4,
     mut_param=5,
     mut_prob=0.1,
     xo_prob=0.9,
