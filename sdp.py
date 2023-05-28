@@ -26,6 +26,8 @@ import random
 import numpy as np
 import pandas as pd
 import plotly.express as px
+from scipy.stats import mannwhitneyu
+import matplotlib.pyplot as plt
 
 
 def get_fitness(self):
@@ -122,8 +124,10 @@ mutations = {
 ###### Set to 1 to allow a shorter test
 passes = 25
 results = {}
+results_all = {}
 for xo_name, xo in crossovers.items():
     results[xo_name] = {}
+    results_all[xo_name] = {}
     for mut_name, mut in mutations.items():
         ga_results = []
         for _ in range(passes):
@@ -139,7 +143,41 @@ for xo_name, xo in crossovers.items():
             best_individual = min(model.individuals, key=attrgetter("fitness"))
             ga_results.append(best_individual.fitness)
         results[xo_name][mut_name] = sum(ga_results) / passes
+        results_all[xo_name][mut_name] = ga_results
 
+# # # STATISTIC TESTS TO COMPARE MODELS # # #
+# In this part we will compare pairs of models using the Mann-Whitney's test. This test
+# compares two samples and concludes if there is statistical evidence that both samples
+# come from different populations or if there is no statistical evidence of this.
+# Moreover, for those where H0 is rejected, we can visually conclude through a boxplot
+# which model is the best for optimizing the problem
+list_crossovers = list(crossovers.keys())
+list_mutations = list(mutations.keys())
+
+for crosso1 in list_crossovers:
+    for mutati1 in list_mutations:
+        for crosso2 in list_crossovers:
+            for mutati2 in list_mutations:
+                if (mutati1==mutati2 and crosso1==crosso2):
+                    pass
+                else:
+                    U_statistic, p_value = mannwhitneyu(results_all[crosso1][mutati1],results_all[crosso2][mutati2])
+                    print("\nCrossover:",crosso1,"| Mutation:",mutati1)
+                    print("                    vs")
+                    print("Crossover:",crosso2,"| Mutation:",mutati2)
+                    print("Value of the statistic (U):", U_statistic)
+                    print("p-value:", p_value)
+                    print("\n==========================================")
+                    aa = [results_all[crosso1][mutati1],results_all[crosso2][mutati2]]
+                    plt.figure()
+                    plt.boxplot(aa, labels = [crosso1+"\n"+mutati1,crosso2+"\n"+mutati2])
+                    if p_value < 0.1:
+                        titulo= "Reject H0"
+                    else:
+                        titulo= "No statistical evidence \n to reject H0"
+                    plt.title(titulo)
+                    plt.show
+# # # END STATISTICS TESTS TO COMPARE MODELS # # #
 
 df = pd.DataFrame(results)
 df = df.apply(lambda x: round(x, 3))
